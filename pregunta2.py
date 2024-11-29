@@ -5,8 +5,8 @@ import tkinter as tk
 import control as ctrl
 
 # Parámetros del sistema
-M = 0.8  # Masa del carro (kg)
-m = 0.23  # Masa del péndulo (kg)
+M = 0.5  # Masa del carro (kg)
+m = 0.2  # Masa del péndulo (kg)
 L = 0.3  # Longitud del péndulo (m)
 g = 9.81 # Aceleración de la gravedad (m/s²)
 
@@ -74,7 +74,7 @@ slider_Ki = tk.Scale(root, from_=0, to_=200, orient="horizontal", label="Ki", le
 slider_Ki.set(80)  # Valor inicial
 slider_Ki.pack()
 
-slider_Kd = tk.Scale(root, from_=0, to_=200, orient="horizontal", label="Kd", length=400)
+slider_Kd = tk.Scale(root, from_=0, to_=20, orient="horizontal", label="Kd", length=400)
 slider_Kd.set(3)  # Valor inicial
 slider_Kd.pack()
 
