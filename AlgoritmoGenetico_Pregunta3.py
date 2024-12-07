@@ -2,9 +2,16 @@ import numpy as np
 import control as ctrl
 from deap import base, creator, tools, algorithms
 
-# Sistema de ejemplo: Planta G(s) = 1 / (s^2 + 3s + 2)
+# Parámetros del sistema
+M = 2  # Masa del carro (kg)
+m = 0.5  # Masa del péndulo (kg)
+l = 1  # Longitud del péndulo (m)
+g = 9.81 # Aceleración de la gravedad (m/s²)
+
+#definir numerador y denominador
 numerador = [1]
-denominador = [1, 3, 2]
+denominador = [M*l, 0, -(M+m)*g]
+
 planta = ctrl.TransferFunction(numerador, denominador)
 
 # Función objetivo: Evaluar rendimiento del controlador PID
@@ -39,7 +46,7 @@ toolbox.register("select", tools.selTournament, tournsize=3)
 toolbox.register("evaluate", evaluar_pid)
 
 # Proceso evolutivo
-population = toolbox.population(n=50)
+population = toolbox.population(n=20)
 ngen = 20  # Número de generaciones
 cxpb = 0.7  # Probabilidad de cruzamiento
 mutpb = 0.2  # Probabilidad de mutación
