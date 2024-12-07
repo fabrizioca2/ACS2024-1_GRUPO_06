@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
-import matplotlib.pyplot as plt
 import control as ctrl
+import plotly.graph_objs as go
 
 # Parámetros del sistema
 M = 0.8  # Masa del carro (kg)
@@ -43,18 +43,20 @@ _, yout_PI = ctrl.step_response(T_PI, t)
 _, yout_PD = ctrl.step_response(T_PD, t)
 _, yout_PID = ctrl.step_response(T_PID, t)
 
-# Graficar las respuestas
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.plot(t, yout_P, label="Controlador P")
-ax.plot(t, yout_PI, label="Controlador PI")
-ax.plot(t, yout_PD, label="Controlador PD")
-ax.plot(t, yout_PID, label="Controlador PID")
+# Graficar las respuestas con Plotly
+trace_P = go.Scatter(x=t, y=yout_P, mode='lines', name="Controlador P")
+trace_PI = go.Scatter(x=t, y=yout_PI, mode='lines', name="Controlador PI")
+trace_PD = go.Scatter(x=t, y=yout_PD, mode='lines', name="Controlador PD")
+trace_PID = go.Scatter(x=t, y=yout_PID, mode='lines', name="Controlador PID")
 
-ax.set_title("Respuestas al Escalón de Controladores P, PI, PD y PID")
-ax.set_xlabel("Tiempo (s)")
-ax.set_ylabel("Salida")
-ax.legend()
-ax.grid(True)
+layout = go.Layout(
+    title="Respuestas al Escalón de Controladores P, PI, PD y PID",
+    xaxis={'title': 'Tiempo (s)'},
+    yaxis={'title': 'Salida'},
+    showlegend=True
+)
 
-# Mostrar el gráfico
-st.pyplot(fig)
+fig = go.Figure(data=[trace_P, trace_PI, trace_PD, trace_PID], layout=layout)
+
+# Mostrar el gráfico con Streamlit
+st.plotly_chart(fig)
