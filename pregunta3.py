@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import control as ctrl
 
 # Parámetros del sistema
-M = 0.8  # Masa del carro (kg)
-m = 0.23  # Masa del péndulo (kg)
-l = 0.3  # Longitud del péndulo (m)
+M = 2  # Masa del carro (kg)
+m = 0.5  # Masa del péndulo (kg)
+l = 1  # Longitud del péndulo (m)
 g = 9.81 # Aceleración de la gravedad (m/s²)
 
 # Definir las ganancias
