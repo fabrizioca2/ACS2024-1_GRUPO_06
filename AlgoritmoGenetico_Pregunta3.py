@@ -8,6 +8,7 @@ m = 0.5  # Masa del péndulo (kg)
 l = 1  # Longitud del péndulo (m)
 g = 9.81 # Aceleración de la gravedad (m/s²)
 
+
 #definir numerador y denominador
 numerador = [1]
 denominador = [M*l, 0, -(M+m)*g]

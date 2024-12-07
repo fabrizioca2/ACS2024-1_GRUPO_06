@@ -1,11 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import control as ctrl
+
 # Parámetros del sistema
 M = 2  # Masa del carro (kg)
 m = 0.5  # Masa del péndulo (kg)
 l = 1  # Longitud del péndulo (m)
 g = 9.81 # Aceleración de la gravedad (m/s²)
+
 
 # Definir las ganancias
 Kp = 120  # Ganancia proporcional

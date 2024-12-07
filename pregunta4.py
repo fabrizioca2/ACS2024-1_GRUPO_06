@@ -8,16 +8,15 @@ m = 0.5  # Masa del péndulo (kg)
 l = 1  # Longitud del péndulo (m)
 g = 9.81 # Aceleración de la gravedad (m/s²)
 
+# Definir las ganancias
+Kp = 30    # Ganancia proporcional
+Ki = 30  # Ganancia integral
+Kd = 30  # Ganancia derivativa
 
 # Definir las ganancias
-Kp = 120    # Ganancia proporcional
-Ki = 160  # Ganancia integral
-Kd = 120  # Ganancia derivativa
-
-# Definir las ganancias ajustadas
-Kp_ = 8    # Ganancia proporcional
-Ki_ = 9  # Ganancia integral
-Kd_ = 7  # Ganancia derivativa
+Kp_ = 37.985    # Ganancia proporcional
+Ki_ = 16.4227  # Ganancia integral
+Kd_ = 9.780  # Ganancia derivativa
 
 # Sistema G(s)
 numerador_G = [1]
