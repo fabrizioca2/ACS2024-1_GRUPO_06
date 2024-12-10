@@ -1,42 +1,25 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.signal import lti, step, TransferFunction
+from scipy.signal import lti, step
 from deap import base, creator, tools, algorithms
 
-# --- Limpiar definiciones previas en creator ---
-if "FitnessMin" in creator.__dict__:
-    del creator.FitnessMin
-if "Individual" in creator.__dict__:
-    del creator.Individual
+# --- Definir la planta como una función de transferencia ---
+from scipy.signal import TransferFunction
 
-# Crear el espacio de soluciones
-creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
-creator.create("Individual", list, fitness=creator.FitnessMin)
-
-toolbox = base.Toolbox()
-toolbox.register("attr_float", np.random.uniform, 0, 10)  # Rango de búsqueda para Kp, Ki, Kd
-toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_float, n=3)
-toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-
-toolbox.register("evaluate", lambda ind: fitness(ind))
-toolbox.register("mate", tools.cxBlend, alpha=0.5)
-toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-toolbox.register("select", tools.selTournament, tournsize=3)
-
-# --- Definir las ganancias según valores iniciales ---
+# Definir las ganancias segun los valores de la pregunta 2, valores ajustados manualmente
 Kp_m = 120  # Ganancia proporcional
-Ki_m = 160  # Ganancia integral
-Kd_m = 120  # Ganancia derivativa
+Ki_m = 160 # Ganancia integral
+Kd_m = 120 # Ganancia derivativa
 
-# --- Parámetros del sistema ---
+# Parámetros del sistema
 M = 2  # Masa del carro (kg)
 m = 0.5  # Masa del péndulo (kg)
 l = 1  # Longitud del péndulo (m)
-g = 9.81  # Aceleración de la gravedad (m/s²)
+g = 9.81 # Aceleración de la gravedad (m/s²)
 
-# Definir numerador y denominador de la planta
+#definir numerador y denominador de la planta
 num = [1]
-den = [M * l, 0, -(M + m) * g]
+den = [M*l, 0, -(M+m)*g]
 plant = TransferFunction(num, den)
 
 # --- Simulación del sistema cerrado con un PID ---
@@ -48,9 +31,7 @@ def simulate_pid(kp, ki, kd, plant, time):
     pid = TransferFunction(num_pid, den_pid)
     
     # Sistema cerrado: G_cl(s) = (G_pid(s) * Plant(s)) / (1 + G_pid(s) * Plant(s))
-    system_closed = lti(np.convolve(pid.num, plant.num),
-                        np.polyadd(np.convolve(pid.num, plant.num),
-                                   np.convolve(pid.den, plant.den)))
+    system_closed = lti(np.convolve(pid.num, plant.num), np.polyadd(np.convolve(pid.num, plant.num), np.convolve(pid.den, plant.den)))
     
     # Simulación del escalón
     t, y = step(system_closed, T=time)
@@ -73,10 +54,25 @@ def fitness(individual):
     
     return mse + overshoot,  # Fitness a minimizar
 
+# --- Configuración del algoritmo genético ---
+# Crear un espacio de soluciones para Kp, Ki y Kd
+creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
+creator.create("Individual", list, fitness=creator.FitnessMin)
+
+toolbox = base.Toolbox()
+toolbox.register("attr_float", np.random.uniform, 0, 10)  # Rango de búsqueda para Kp, Ki, Kd
+toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_float, n=3)
+toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+
+toolbox.register("evaluate", fitness)
+toolbox.register("mate", tools.cxBlend, alpha=0.5)
+toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
+toolbox.register("select", tools.selTournament, tournsize=3)
+
 # --- Ejecución del algoritmo genético ---
 def main():
     np.random.seed(42)  # Para reproducibilidad
-    pop = toolbox.population(n=100)  # Tamaño de la población
+    pop = toolbox.population(n=200)  # Tamaño de la población
     hof = tools.HallOfFame(1)  # Mejor individuo encontrado
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("min", np.min)
@@ -92,7 +88,6 @@ def main():
     time = np.linspace(0, 10, 1000)
     t, y = simulate_pid(best[0], best[1], best[2], plant, time)
     t_m, y_m = simulate_pid(Kp_m, Ki_m, Kd_m, plant, time)
-    
     # Graficar resultado
     plt.figure()
     plt.plot(t, y, label="Gráfica PID ajustado con algoritmos genéticos")
