@@ -1,28 +1,28 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import tkinter as tk
 import control as ctrl
+import tkinter as tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # Parámetros del sistema
-M = 0.8  # Masa del carro (kg)
-m = 0.23  # Masa del péndulo (kg)
-L = 0.3  # Longitud del péndulo (m)
-g = 9.81 # Aceleración de la gravedad (m/s²)
+M = 2  # Masa del carro (kg)
+m = 0.5  # Masa del péndulo (kg)
+l = 1  # Longitud del péndulo (m)
+g = 9.81  # Aceleración de la gravedad (m/s²)
 
-# Función que actualiza el gráfico
+# Sistema G(s)
+numerador_G = [1]
+denominador_G = [(M * l), 0, -(M + m) * g]
+G = ctrl.TransferFunction(numerador_G, denominador_G)
+
+# Función para actualizar el gráfico
 def update_plot():
-    # Obtener los valores de los sliders
-    Kp = slider_Kp.get()
-    Ki = slider_Ki.get()
-    Kd = slider_Kd.get()
+    # Obtener valores de las barras deslizantes
+    Kp = slider_kp.get()
+    Ki = slider_ki.get()
+    Kd = slider_kd.get()
 
-    # Sistema G(s)
-    numerador_G = [1]
-    denominador_G = [M * L, 0, -(M + m) * g]
-    G = ctrl.TransferFunction(numerador_G, denominador_G)
-
-    # Controladores P, PI, PD, PID
+    # Definir los controladores
     C_P = ctrl.TransferFunction([Kp], [1])
     C_PI = ctrl.TransferFunction([Kp, Ki], [1, 0])
     C_PD = ctrl.TransferFunction([Kd, Kp], [1])
@@ -35,7 +35,7 @@ def update_plot():
     T_PID = ctrl.feedback(G * C_PID)
 
     # Tiempo de simulación
-    t = np.linspace(0, 1, 1000)
+    t = np.linspace(0, 5, 1000)
 
     # Respuestas al escalón
     time_P, yout_P = ctrl.step_response(T_P, t)
@@ -43,7 +43,7 @@ def update_plot():
     time_PD, yout_PD = ctrl.step_response(T_PD, t)
     time_PID, yout_PID = ctrl.step_response(T_PID, t)
 
-    # Limpiar el gráfico antes de dibujar uno nuevo
+    # Limpiar el gráfico actual
     ax.clear()
 
     # Graficar las respuestas
@@ -51,43 +51,50 @@ def update_plot():
     ax.plot(time_PI, yout_PI, label="Controlador PI")
     ax.plot(time_PD, yout_PD, label="Controlador PD")
     ax.plot(time_PID, yout_PID, label="Controlador PID")
-    
+
+    # Personalizar gráfico
+    ax.axhline(y=1, color='r', linestyle='--', label="Referencia (setpoint)")
     ax.set_title("Respuestas al Escalón de Controladores P, PI, PD y PID")
     ax.set_xlabel("Tiempo (s)")
     ax.set_ylabel("Salida")
     ax.legend()
     ax.grid(True)
+    ax.set_ylim(-5, 5)
 
-    # Actualizar el gráfico en la ventana de Tkinter
+    # Dibujar el gráfico actualizado
     canvas.draw()
 
 # Crear la ventana principal
 root = tk.Tk()
-root.title("Controladores P, PI, PD, PID")
+root.title("Simulador de Controladores PID")
 
-# Crear los sliders para Kp, Ki, Kd
-slider_Kp = tk.Scale(root, from_=0, to_=200, orient="horizontal", label="Kp", length=400)
-slider_Kp.set(80)  # Valor inicial
-slider_Kp.pack()
+# Crear un marco para los sliders
+frame_controls = tk.Frame(root)
+frame_controls.pack(side=tk.LEFT, padx=10, pady=10)
 
-slider_Ki = tk.Scale(root, from_=0, to_=200, orient="horizontal", label="Ki", length=400)
-slider_Ki.set(80)  # Valor inicial
-slider_Ki.pack()
+# Crear sliders para Kp, Ki, Kd
+slider_kp = tk.Scale(frame_controls, from_=0, to_=500, resolution=1, orient=tk.HORIZONTAL, label="Kp")
+slider_kp.set(120)
+slider_kp.pack()
 
-slider_Kd = tk.Scale(root, from_=0, to_=200, orient="horizontal", label="Kd", length=400)
-slider_Kd.set(3)  # Valor inicial
-slider_Kd.pack()
+slider_ki = tk.Scale(frame_controls, from_=0, to_=500, resolution=1, orient=tk.HORIZONTAL, label="Ki")
+slider_ki.set(160)
+slider_ki.pack()
 
-# Crear la figura de Matplotlib y agregarla a la ventana de Tkinter
-fig, ax = plt.subplots(figsize=(10, 6))
-
-# Crear el canvas de Matplotlib y agregarlo a la ventana de Tkinter
-canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().pack()
+slider_kd = tk.Scale(frame_controls, from_=0, to_=500, resolution=1, orient=tk.HORIZONTAL, label="Kd")
+slider_kd.set(120)
+slider_kd.pack()
 
 # Botón para actualizar el gráfico
-button = tk.Button(root, text="Actualizar Gráfico", command=update_plot)
-button.pack()
+btn_update = tk.Button(frame_controls, text="Actualizar Gráfico", command=update_plot)
+btn_update.pack(pady=10)
 
-# Ejecutar la ventana de Tkinter
+# Crear el gráfico
+fig, ax = plt.subplots(figsize=(8, 6))
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas_widget = canvas.get_tk_widget()
+canvas_widget.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+# Mostrar la ventana principal
+update_plot()  # Mostrar el gráfico inicial
 root.mainloop()
