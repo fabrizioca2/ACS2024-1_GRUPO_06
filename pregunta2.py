@@ -73,15 +73,15 @@ frame_controls = tk.Frame(root)
 frame_controls.pack(side=tk.LEFT, padx=10, pady=10)
 
 # Crear sliders para Kp, Ki, Kd
-slider_kp = tk.Scale(frame_controls, from_=0, to_=500, resolution=1, orient=tk.HORIZONTAL, label="Kp")
+slider_kp = tk.Scale(frame_controls, from_=0, to_=2000, resolution=1, orient=tk.HORIZONTAL, label="Kp")
 slider_kp.set(120)
 slider_kp.pack()
 
-slider_ki = tk.Scale(frame_controls, from_=0, to_=500, resolution=1, orient=tk.HORIZONTAL, label="Ki")
+slider_ki = tk.Scale(frame_controls, from_=0, to_=2000, resolution=1, orient=tk.HORIZONTAL, label="Ki")
 slider_ki.set(160)
 slider_ki.pack()
 
-slider_kd = tk.Scale(frame_controls, from_=0, to_=500, resolution=1, orient=tk.HORIZONTAL, label="Kd")
+slider_kd = tk.Scale(frame_controls, from_=0, to_=2000, resolution=1, orient=tk.HORIZONTAL, label="Kd")
 slider_kd.set(120)
 slider_kd.pack()
 
