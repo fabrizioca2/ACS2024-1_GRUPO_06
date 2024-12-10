@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulación PID</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Simulación PID</h1>
+    </header>
+    <main>
+        <div class="container">
+            <div class="form-container">
+                <form id="pid-form">
+                    <div class="slider-container">
+                        <label for="kp">Kp: <span id="kp-value">120</span></label>
+                        <input type="range" id="kp" name="kp" min="0" max="300" step="1" value="120">
+                    </div>
+                    <div class="slider-container">
+                        <label for="ki">Ki: <span id="ki-value">160</span></label>
+                        <input type="range" id="ki" name="ki" min="0" max="300" step="1" value="160">
+                    </div>
+                    <div class="slider-container">
+                        <label for="kd">Kd: <span id="kd-value">120</span></label>
+                        <input type="range" id="kd" name="kd" min="0" max="300" step="1" value="120">
+                    </div>
+                    <button type="submit">Simular</button>
+                </form>
+            </div>
+            <div id="plot-container">
+                <div id="plot"></div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>Simulación Pregunta 2</p>
+    </footer>
+    <script>
+        // Actualizar los valores mostrados al mover los sliders
+        const kpSlider = document.getElementById('kp');
+        const kiSlider = document.getElementById('ki');
+        const kdSlider = document.getElementById('kd');
+        const kpValue = document.getElementById('kp-value');
+        const kiValue = document.getElementById('ki-value');
+        const kdValue = document.getElementById('kd-value');
+
+        kpSlider.addEventListener('input', () => kpValue.textContent = kpSlider.value);
+        kiSlider.addEventListener('input', () => kiValue.textContent = kiSlider.value);
+        kdSlider.addEventListener('input', () => kdValue.textContent = kdSlider.value);
+
+        document.getElementById('pid-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const kp = parseFloat(kpSlider.value);
+            const ki = parseFloat(kiSlider.value);
+            const kd = parseFloat(kdSlider.value);
+
+            const response = await fetch('/simulate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Kp: kp, Ki: ki, Kd: kd })
+            });
+
+            const data = await response.json();
+
+            const trace = {
+                x: data.time,
+                y: data.response,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Respuesta PID'
+            };
+
+            const layout = {
+                title: 'Respuesta al Escalón',
+                xaxis: { title: 'Tiempo (s)' },
+                yaxis: { title: 'Salida' }
+            };
+
+            Plotly.newPlot('plot', [trace], layout);
+        });
+    </script>
+</body>
+</html>
