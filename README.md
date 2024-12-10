@@ -14,10 +14,10 @@ Directorios:
 # 🎯 Objetivo del Proyecto
 El proyecto aborda el diseño y simulación del control de un péndulo invertido, un sistema inestable que requiere un controlador PID para estabilizarlo. Se evaluaron diferentes estrategias de control, incluyendo:
 
-. Controlador proporcional (P).
-. Controlador proporcional-integral (PI).
-. Controlador proporcional-derivativo (PD).
-. Controlador proporcional-integral-derivativo (PID).
+- Controlador proporcional (P).
+- Controlador proporcional-integral (PI).
+- Controlador proporcional-derivativo (PD).
+- Controlador proporcional-integral-derivativo (PID).
 Además, se realizaron ajustes manuales y optimización mediante algoritmos genéticos. También se comparó el control clásico con enfoques modernos utilizando simulaciones en Gymnasium.
 
 # 🛠️ Librerías Requeridas
@@ -43,5 +43,5 @@ Informe final: Documento en PDF con todas las respuestas y conclusiones.
 - Carl0swg (Carlos Wong)
 
 # 🌟 Recursos Adicionales
-Repositorio GitHub
-Video Explicativo
+- Repositorio GitHub
+- Video Explicativo
