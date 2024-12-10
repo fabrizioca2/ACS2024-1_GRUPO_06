@@ -14,9 +14,9 @@ denominator = [(M*l), 0, -(M+m)*g]
 plant = TransferFunction(numerator, denominator)
 
 # Parámetros del controlador PID
-Kp = 523.40   # Ganancia proporcional300
-Ki = 195.6    # Ganancia integral70
-Kd = 654.24   # Ganancia derivativa10
+Kp = 300   # Ganancia proporcional300
+Ki = 70    # Ganancia integral70
+Kd = 10   # Ganancia derivativa10
 
 # Función de transferencia del controlador PID
 numerator_pid = [Kd, Kp, Ki]    # Numerador: Kd * s^2 + Kp * s + Ki
